@@ -1,0 +1,30 @@
+/* Collapsible filter sidebar (collapse.js): when collapsed only the heading stays */
+#changelist-filter > h2 {
+    cursor: pointer;
+    user-select: none;
+}
+
+#changelist-filter > h2::after {
+    content: " »";
+}
+
+#changelist-filter.filter-kit-collapsed > h2::after {
+    content: " «";
+}
+
+#changelist-filter.filter-kit-collapsed {
+    flex-basis: auto;
+}
+
+#changelist-filter.filter-kit-collapsed > h2 {
+    margin-bottom: 0;
+}
+
+#changelist-filter.filter-kit-collapsed > :not(h2) {
+    display: none;
+}
+
+/* Django 6.0+ keeps room for the sidebar next to the table — a collapsed sidebar doesn't need it */
+#changelist .changelist-form-container:has(> #changelist-filter.filter-kit-collapsed) > div {
+    max-width: none;
+}

@@ -1,0 +1,11 @@
+{% load i18n %}
+<details data-filter-title="{{ title }}" open>
+  <summary>
+    {% blocktranslate with filter_title=title %} By {{ filter_title }} {% endblocktranslate %}
+  </summary>
+  {% for choice in choices %}
+    <div class="filter-kit-autocomplete" data-query-string="{{ choice.query_string }}" data-lookup="{{ choice.lookup_kwarg }}">
+      {{ choice.widget }}
+    </div>
+  {% endfor %}
+</details>

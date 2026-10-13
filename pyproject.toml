@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "django-admin-filter-kit"
+version = "0.1.0"
+description = "Админка Django: фильтр с подсказками и сворачиваемая панель фильтров · Django admin: autocomplete filter and collapsible filter sidebar"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Nick" }]
+requires-python = ">=3.10"
+dependencies = ["Django>=5.2"]
+keywords = ["django", "admin", "filter", "autocomplete", "select2", "list_filter"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Homepage = "https://github.com/mcnickbronx/django-admin-filter-kit"
+Issues = "https://github.com/mcnickbronx/django-admin-filter-kit/issues"
+Changelog = "https://github.com/mcnickbronx/django-admin-filter-kit/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["admin_filter_kit"]
+
+[tool.hatch.build.targets.sdist]
+include = ["admin_filter_kit", "tests", "README.md", "README.en.md", "CHANGELOG.md", "LICENSE"]

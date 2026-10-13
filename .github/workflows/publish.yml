@@ -1,0 +1,23 @@
+# A GitHub release publishes the package to PyPI. PyPI trusts this workflow (Trusted Publishing),
+# so no token is stored: on pypi.org the project's publisher is this repository, publish.yml, environment "pypi".
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - run: pip install -e . build
+      - run: python -m django test --settings=tests.settings
+      - run: python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1
