@@ -1,5 +1,10 @@
 # django-admin-filter-kit
 
+[![PyPI](https://img.shields.io/pypi/v/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Python](https://img.shields.io/pypi/pyversions/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Django](https://img.shields.io/pypi/frameworkversions/django/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Tests](https://github.com/mcnickbronx/django-admin-filter-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/mcnickbronx/django-admin-filter-kit/actions/workflows/tests.yml)
+
 [Русский](https://github.com/mcnickbronx/django-admin-filter-kit/blob/main/README.md) · English
 
 Small additions to the filters of Django admin lists:
@@ -11,7 +16,8 @@ Small additions to the filters of Django admin lists:
 - **The cursor goes straight to the search box** when a suggestion dropdown opens. Select2 4.0.13,
   bundled with Django, doesn't focus it with jQuery 3.6+, and the first typed letter is lost.
 
-No dependencies besides Django. Supports Django 5.2, 6.0 and 6.1 on Python 3.10+.
+On PyPI: `pip install django-admin-filter-kit`. No dependencies besides Django.
+Supports Django 4.2, 5.2, 6.0 and 6.1 on Python 3.10+.
 
 ## Installation
 
@@ -64,6 +70,23 @@ So there are no extra URLs, and the rules are the same:
 The list page never loads the related table: only the selected object, to show its name.
 Picking an object reloads the list filtered by it, the × clears the filter. Other filters,
 search and ordering stay as they are.
+
+The filter's title is the field's name by default. A subclass sets its own title and its own
+filtering; `value()` returns the picked object's id or `None`.
+
+```python
+class CompanyFilter(AutocompleteFilter):
+    title = "company"
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        # e.g. a document is linked to a company through either of two tables
+        return queryset.filter(Q(act__company=self.value()) | Q(invoice__company=self.value())).distinct()
+
+
+list_filter = [("act__company", CompanyFilter)]  # suggestions come from the act.company field
+```
 
 Not supported yet: several objects at once and a choice for records without a related object.
 

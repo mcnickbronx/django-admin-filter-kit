@@ -44,12 +44,19 @@ class AutocompleteFilterTests(AdminTestCase):
         response = self.get_books(tags__id__exact=self.novel.pk)
         self.assertEqual(list(response.context["cl"].result_list), [self.war])
 
-    def test_filter_across_a_relation(self):
+    def test_filter_across_a_relation_with_own_title_and_queryset(self):
         review = Review.objects.create(book=self.war, text="Long")
+        mention = Review.objects.create(book=self.steppe, text="Chekhov read Leo Tolstoy")
         Review.objects.create(book=self.steppe, text="Short")
         response = self.client.get(reverse("admin:tests_review_changelist"), {"book__author__id__exact": self.tolstoy.pk})
-        self.assertEqual(list(response.context["cl"].result_list), [review])
+        self.assertEqual(set(response.context["cl"].result_list), {review, mention})
+        self.assertEqual(response.context["cl"].filter_specs[0].value(), str(self.tolstoy.pk))
+        self.assertContains(response, 'data-filter-title="writer"')
         self.assertContains(response, 'data-model-name="book" data-field-name="author"')
+
+    def test_title_comes_from_the_field_by_default(self):
+        self.assertContains(self.get_books(), 'data-filter-title="author"')
+        self.assertIsNone(self.get_books().context["cl"].filter_specs[0].value())
 
     def test_list_address_without_the_filter_keeps_the_others(self):
         response = self.get_books(author__id__exact=self.tolstoy.pk, tags__id__exact=self.novel.pk)

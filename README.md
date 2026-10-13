@@ -1,5 +1,10 @@
 # django-admin-filter-kit
 
+[![PyPI](https://img.shields.io/pypi/v/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Python](https://img.shields.io/pypi/pyversions/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Django](https://img.shields.io/pypi/frameworkversions/django/django-admin-filter-kit)](https://pypi.org/project/django-admin-filter-kit/)
+[![Tests](https://github.com/mcnickbronx/django-admin-filter-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/mcnickbronx/django-admin-filter-kit/actions/workflows/tests.yml)
+
 Русский · [English](https://github.com/mcnickbronx/django-admin-filter-kit/blob/main/README.en.md)
 
 Небольшие дополнения к фильтрам списков в админке Django:
@@ -11,7 +16,8 @@
 - **Курсор сразу в поле поиска**, когда открываются подсказки. Select2 4.0.13, который идёт
   с Django, с jQuery 3.6+ фокус сам не ставит, и первая набранная буква теряется.
 
-Зависимостей, кроме Django, нет. Поддерживаются Django 5.2, 6.0 и 6.1 на Python 3.10+.
+Пакет на PyPI: `pip install django-admin-filter-kit`. Зависимостей, кроме Django, нет.
+Поддерживаются Django 4.2, 5.2, 6.0 и 6.1 на Python 3.10+.
 
 ## Установка
 
@@ -64,6 +70,23 @@ class AuthorAdmin(admin.ModelAdmin):
 Страница списка не загружает справочник целиком — только выбранную запись, чтобы показать её
 название. Выбор записи перезагружает список с фильтром, × снимает фильтр. Остальные фильтры,
 поиск и сортировка сохраняются.
+
+Заголовок фильтра по умолчанию — название поля. Свой заголовок и свою логику отбора задают
+в подклассе: `value()` возвращает id выбранной записи или `None`.
+
+```python
+class CompanyFilter(AutocompleteFilter):
+    title = "компании"
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        # например, документ связан с компанией через любую из двух таблиц
+        return queryset.filter(Q(act__company=self.value()) | Q(invoice__company=self.value())).distinct()
+
+
+list_filter = [("act__company", CompanyFilter)]  # подсказки — по полю act.company
+```
 
 Пока не умеет: выбрать несколько записей сразу и отобрать записи без связи.
 
